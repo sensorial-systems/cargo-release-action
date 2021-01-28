@@ -1,4 +1,4 @@
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
-    println!("Args: {:#?}", args);
+    let github_json = std::env::var("GITHUB_JSON").expect("Couldn't get GITHUB_JSON");
+    println!("{}", github_json);
 }

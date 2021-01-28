@@ -13,5 +13,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: cargo run --release --manifest-path=${{ github.action_path }}/Cargo.toml -- ${{ toJson(github) }}
+    - env:
+        - GITHUB_JSON: ${{ toJson(github) }}
+    - run: cargo run --release --manifest-path=${{ github.action_path }}/Cargo.toml
       shell: bash
