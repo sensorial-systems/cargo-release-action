@@ -1,0 +1,17 @@
+name: 'Hello World'
+description: 'Greet someone'
+inputs:
+  major-label:
+    description: 'Label used for bumping the major semver number'
+    required: true
+  minor-label:
+    description: 'Label used for bumping the minor semver number'
+    required: true
+  patch-label:
+    description: 'Label used for bumping the patch semver number'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: cargo run --release --manifest-path=${{ github.action_path }}/Cargo.toml -- ${{ toJson(github) }}
+      shell: bash
