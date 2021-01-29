@@ -2,10 +2,12 @@ mod github_format;
 use github_format::*;
 
 use serde_json::Result;
+use std::io::Read;
 
 #[derive(Debug)]
 pub struct GithubContext {
-    pub event: Event
+    pub event: Event,
+    pub repository: String
 }
 
 impl GithubContext {
@@ -15,10 +17,12 @@ impl GithubContext {
     }
 
     pub fn labels(&self) -> Vec<Label> {
-        match &self.event {
-            Event::PullRequest(pull_request) => pull_request.labels.clone(),
-            Event::Unknown => Vec::new()
-        }
+        let pr_number = match &self.event {
+            Event::PullRequest(pull_request) => pull_request.number,
+            Event::Unknown => 0
+        };
+        let pull_request = PullRequest::get(&self.repository, pr_number).expect("Couldn't get PullRequest");
+        pull_request.labels
     }
 }
 
@@ -29,7 +33,8 @@ impl From<GithubContextStruct> for GithubContext {
         } else {
             Event::Unknown
         };
-        GithubContext { event }
+        let repository = from.repository;
+        GithubContext { event, repository }
     }
 }
 
