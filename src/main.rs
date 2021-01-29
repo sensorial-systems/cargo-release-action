@@ -35,14 +35,14 @@ fn check_publish() {
         .args(args.iter())
         .output()
         .expect("Couldn't get Output.");
-    if !output.status.success() {
-        panic!("Command execution failed.");
-    } else {
+    if output.status.success() {
         let output = String::from_utf8(output.stdout).expect("Couldn't parse utf8.");
         println!("{}", output);
         if let Some(_) = output.find("warning") {
             std::process::exit(-1);
         }
+    } else {
+        panic!("Command execution failed.");
     }
 }
 
@@ -51,6 +51,7 @@ fn main() {
 
     let github_json = std::env::var("GITHUB_JSON").expect("Couldn't get GITHUB_JSON");
     let github = GithubContext::from_str(&github_json).expect("Couldn't parse JSON.");
+    pritnln!("Github: {:#?}", github);
     let release: Option<Release> = (&github).into();
     match &github.event {
         Event::PullRequest(_) => {
