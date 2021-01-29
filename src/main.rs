@@ -28,13 +28,20 @@ impl From<&GithubContext> for Option<Release> {
     }
 }
 
-fn execute(command: &str, args: &[&str]) {
-    let status = Command::new(command)
+fn check_publish() {
+    let command = "cargo";
+    let args = &["publish", "--dry-run"];
+    let output = Command::new(command)
         .args(args.iter())
-        .status()
-        .expect("Couldn't get ExitStatus.");
-    if !status.success() {
+        .output()
+        .expect("Couldn't get Output.");
+    if !output.status.success() {
         panic!("Command execution failed.");
+    } else {
+        let output = String::from_utf8(output.stdout).expect("Couldn't parse utf8.");
+        if let Some(_) = output.find("warning") {
+            panic!(output);
+        }
     }
 }
 
@@ -45,7 +52,7 @@ fn main() {
     match &github.event {
         Event::PullRequest(_) => {
             println!("The semver {:?} number will be bumped on merge.", release.expect("Release label not present"));
-            execute("cargo", &["publish", "--dry-run"]);
+            check_publish();
         },
         _ => ()
     }
