@@ -1,8 +1,6 @@
 mod github_format;
 use github_format::*;
-
 use serde_json::Result;
-use std::io::Read;
 
 #[derive(Debug)]
 pub struct GithubContext {

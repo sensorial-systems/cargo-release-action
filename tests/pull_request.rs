@@ -4,7 +4,7 @@ mod test {
 
     #[test]
     fn test() {
-        let github_json = include_str!("test.json");
+        let github_json = include_str!("pull_request.json");
         let github = GithubContext::from_str(&github_json).expect("Couldn't parse JSON.");
         println!("Github: {:#?}", github);
         println!("PR labels: {:#?}", github.labels());
