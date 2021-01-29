@@ -51,7 +51,7 @@ fn main() {
 
     let github_json = std::env::var("GITHUB_JSON").expect("Couldn't get GITHUB_JSON");
     let github = GithubContext::from_str(&github_json).expect("Couldn't parse JSON.");
-    pritnln!("Github: {:#?}", github);
+    println!("Github: {:#?}", github);
     let release: Option<Release> = (&github).into();
     match &github.event {
         Event::PullRequest(_) => {
