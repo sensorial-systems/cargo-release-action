@@ -39,13 +39,16 @@ fn check_publish() {
         panic!("Command execution failed.");
     } else {
         let output = String::from_utf8(output.stdout).expect("Couldn't parse utf8.");
+        println!("{}", output);
         if let Some(_) = output.find("warning") {
-            panic!(output);
+            std::process::exit(-1);
         }
     }
 }
 
 fn main() {
+    check_publish();
+
     let github_json = std::env::var("GITHUB_JSON").expect("Couldn't get GITHUB_JSON");
     let github = GithubContext::from_str(&github_json).expect("Couldn't parse JSON.");
     let release: Option<Release> = (&github).into();
