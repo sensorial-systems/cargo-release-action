@@ -3,10 +3,13 @@
 //!  but we want our API to reflect this.
 
 use cargo_release_action::*;
+use cargo_release_action::utils::*;
 
 fn main() {
-    check_publish();
-
+    std::env::set_var("GITHUB_JSON", include_str!("../tests/push.json"));
+    std::env::set_var("PATCH_LABEL", "patch");
+    std::env::set_var("MINOR_LABEL", "minor");
+    std::env::set_var("MAJOR_LABEL", "major");
     let github_json = std::env::var("GITHUB_JSON").expect("Couldn't get GITHUB_JSON");
     println!("{}", github_json);
     let github = GithubContext::from_str(&github_json).expect("Couldn't parse JSON.");
@@ -17,6 +20,9 @@ fn main() {
             println!("The semver {:?} number will be bumped on merge.", release.expect("Release label not present"));
             check_publish();
         },
-        _ => ()
+        Event::Push(_) => {
+            execute("cargo", &["release", format!("{:?}", release).to_lowercase(), "--no-confirm"])
+        },
+        Event::Unknown => ()
     }
 }

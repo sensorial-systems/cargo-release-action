@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 use std::io::Read;
+use crate::utils::get;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GithubContextStruct {
@@ -10,21 +11,45 @@ pub struct GithubContextStruct {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EventStruct {
     pub pull_request: Option<PullRequest>,
+    #[serde(flatten)]
+    pub push: Option<Push>
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Push {
+    pub commits: Vec<Commit>
+}
+
+impl Push {
+    pub fn get_pull_request_number(&self, repository: &str) -> Option<u64> {
+        let pull_requests: Vec<PullRequest> = get(&format!("https://api.github.com/repos/{}/pulls?state=closed", repository)).expect("Couldn't get Pull Requests.");
+        pull_requests.iter().filter(|pull_request| {
+            pull_request.merge_commit_sha.is_some()
+        }).map(|pull_request| {
+            (pull_request.number, pull_request.merge_commit_sha.as_ref().unwrap())
+        }).find(|(pr_number, merge_commit_sha)| {
+            self.commits.iter().find(|commit| commit.id == **merge_commit_sha).is_some()
+        }).map(|(pr_number, _)| {
+            pr_number
+        })
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Commit {
+    pub id: String
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PullRequest {
     pub number: u64,
-    pub(crate) labels: Vec<Label>
+    pub(crate) labels: Vec<Label>,
+    pub merge_commit_sha: Option<String>
 }
 
 impl PullRequest {
     pub fn get(repository: &str, number: u64) -> serde_json::Result<Self> {
-        let client = reqwest::blocking::Client::builder().user_agent("cargo-release-action").build().expect("Couldn't create client.");
-        let mut res = client.execute(client.get(&format!("https://api.github.com/repos/{}/pulls/{}", repository, number)).build().expect("Couldn't create request.")).expect("Couldn't get response");
-        let mut body = String::new();
-        res.read_to_string(&mut body).expect("Couldn't read body to string.");
-        serde_json::from_str(&body)
+        get(&format!("https://api.github.com/repos/{}/pulls/{}", repository, number))
     }
 }
 

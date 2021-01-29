@@ -1,6 +1,7 @@
-mod github;
 pub use github::*;
-use std::process::Command;
+
+mod github;
+pub mod utils;
 
 #[derive(Debug)]
 pub enum Release {
@@ -25,23 +26,5 @@ impl From<&GithubContext> for Option<Release> {
         } else {
             None
         }
-    }
-}
-
-pub fn check_publish() {
-    let command = "cargo";
-    let args = &["publish", "--dry-run"];
-    let output = Command::new(command)
-        .args(args.iter())
-        .output()
-        .expect("Couldn't get Output.");
-    if output.status.success() {
-        let output = String::from_utf8(output.stdout).expect("Couldn't parse utf8.");
-        println!("{}", output);
-        if let Some(_) = output.find("warning") {
-            std::process::exit(-1);
-        }
-    } else {
-        panic!("Command execution failed.");
     }
 }
