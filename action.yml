@@ -16,4 +16,7 @@ runs:
     - run: cargo run --release --manifest-path=${{ github.action_path }}/Cargo.toml
       env:
         GITHUB_JSON: ${{ toJson(github) }}
+        MAJOR_LABEL: ${{ inputs.major-label }}
+        MINOR_LABEL: ${{ inputs.minor-label }}
+        PATCH_LABEL: ${{ inputs.patch-label }}
       shell: bash
