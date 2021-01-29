@@ -44,7 +44,7 @@ fn main() {
     let release: Option<Release> = (&github).into();
     match &github.event {
         Event::PullRequest(_) => {
-            assert!(release.is_some(), "Release label not present.");
+            println!("The semver {:?} number will be bumped on merge.", release.expect("Release label not present"));
             execute("cargo", &["publish", "--dry-run"]);
         },
         _ => ()
