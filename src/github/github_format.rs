@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use std::io::Read;
 use crate::utils::get;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -27,7 +26,7 @@ impl Push {
             pull_request.merge_commit_sha.is_some()
         }).map(|pull_request| {
             (pull_request.number, pull_request.merge_commit_sha.as_ref().unwrap())
-        }).find(|(pr_number, merge_commit_sha)| {
+        }).find(|(_pr_number, merge_commit_sha)| {
             self.commits.iter().find(|commit| commit.id == **merge_commit_sha).is_some()
         }).map(|(pr_number, _)| {
             pr_number

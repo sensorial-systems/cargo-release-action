@@ -21,7 +21,7 @@ fn main() {
             check_publish();
         },
         Event::Push(_) => {
-            execute("cargo", &["release", format!("{:?}", release).to_lowercase(), "--no-confirm"])
+            publish(&format!("{:?}", release).to_lowercase(), "");
         },
         Event::Unknown => ()
     }

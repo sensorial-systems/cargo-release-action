@@ -1,5 +1,4 @@
 use std::io::Read;
-use serde::Deserialize;
 use serde::de::DeserializeOwned;
 use std::process::Command;
 
@@ -11,7 +10,7 @@ pub fn get<T: DeserializeOwned>(url: &str) -> serde_json::Result<T> {
     serde_json::from_str(&body)
 }
 
-pub fn execute(command: &str, args: &[&str]) {
+fn execute(command: &str, args: &[&str]) {
     let status = Command::new(command)
         .args(args.iter())
         .status()
@@ -19,6 +18,10 @@ pub fn execute(command: &str, args: &[&str]) {
     if !status.success() {
         panic!("Command execution failed.");
     }
+}
+
+pub fn publish(release: &str, _token: &str) {
+    execute("cargo", &[release, "--no-confirm"])
 }
 
 pub fn check_publish() {
