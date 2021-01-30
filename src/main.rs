@@ -21,8 +21,7 @@ fn main() {
                 println!("Releasing...");
                 let release = format!("{:?}", release).to_lowercase();
                 let cargo_token  = std::env::var("CARGO_TOKEN").expect("Couldn't get CARGO_TOKEN. Remember to set the cargo-token input in your 'on push' action.");
-                let github_token = std::env::var("GITHUB_TOKEN").expect("Couldn't get GITHUB_TOKEN. Remember to set the github-token input in your 'on push' action.");
-                publish(&release, &github_token, &cargo_token).expect("Publish failed.");
+                publish(&release, &cargo_token).expect("Publish failed.");
             } else {
                 println!("Not releasing.");
             }
