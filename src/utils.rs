@@ -16,16 +16,12 @@ fn execute(command: &str, args: &[&str]) -> Result<String, String> {
         .args(args.iter())
         .output()
         .expect("Couldn't get Output.");
-    let stdout = String::from_utf8(output.stdout)
-        .map(|stdout| {
-            println!("{}", stdout);
-            stdout
-        })
-        .map_err(|err| {
-            err.to_string()
-        });
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let message = format!("stdout: {}\nstderr: {}", stdout, stderr);
+    println!("{}", message);
     if output.status.success() {
-        stdout
+        Ok(message)
     } else {
         Err(format!("{} {:?}: execution failed", command, args))
     }
