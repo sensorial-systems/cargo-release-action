@@ -10,37 +10,30 @@ pub fn get<T: DeserializeOwned>(url: &str) -> serde_json::Result<T> {
     serde_json::from_str(&body)
 }
 
-fn execute(command: &str, args: &[&str]) {
-    println!("Executing: {} {:?}", command, args);
-    let status = Command::new(command)
-        .args(args.iter())
-        .status()
-        .expect("Couldn't get ExitStatus.");
-    if !status.success() {
-        panic!("{} {:?}: execution failed.", command, args);
-    }
-}
-
-pub fn publish(release: &str, _token: &str) {
-    execute("cargo", &["install", "cargo-release"]);
-    execute("cargo", &["release", release, "--no-confirm"])
-}
-
-pub fn check_publish() {
-    let command = "cargo";
-    let args = &["publish", "--dry-run"];
+fn execute(command: &str, args: &[&str]) -> Result<String, String> {
     println!("Executing: {} {:?}", command, args);
     let output = Command::new(command)
         .args(args.iter())
         .output()
         .expect("Couldn't get Output.");
     if output.status.success() {
-        let output = String::from_utf8(output.stdout).expect("Couldn't parse utf8.");
-        println!("{}", output);
-        if let Some(_) = output.find("warning") {
-            std::process::exit(-1);
-        }
+        String::from_utf8(output.stdout)
+            .map_err(|err| {
+                err.to_string()
+            })
     } else {
-        panic!("{} {:?}: execution failed.", command, args);
+        Err(format!("{} {:?}: execution failed", command, args))
     }
+}
+
+pub fn publish(release: &str, _token: &str) -> Result<String, String> {
+    execute("cargo", &["install", "cargo-release"])?;
+    execute("cargo", &["release", release, "--no-confirm"])
+}
+
+pub fn check_publish() -> Result<(), String> {
+    let output = execute("cargo", &["publish", "--dry-run"])?;
+    output.find("warning")
+        .map(|_| ())
+        .ok_or_else(|| "Check publish failed.".to_string())
 }
