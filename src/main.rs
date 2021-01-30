@@ -11,10 +11,12 @@ fn main() {
     let release: Option<Release> = (&github).into();
     match &github.event {
         Event::PullRequest(_) => {
+            println!("Checking release...");
             println!("The semver {:?} number will be bumped on merge.", release.expect("Release label not present."));
             check_publish().expect("Check publish failed.");
         },
         Event::Push(_) => {
+            println!("Releasing...");
             // If release.is_none(), then the Event::Push probably didn't come from a pull request.
             if let Some(release) = release {
                 let release = format!("{:?}", release).to_lowercase();
