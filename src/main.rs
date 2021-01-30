@@ -6,6 +6,10 @@ use cargo_release_action::*;
 use cargo_release_action::utils::*;
 
 fn main() {
+    std::env::set_var("GITHUB_JSON", include_str!("../tests/pull_request.json"));
+    std::env::set_var("PATCH_LABEL", "patch");
+    std::env::set_var("MINOR_LABEL", "minor");
+    std::env::set_var("MAJOR_LABEL", "major");
     let github_json = std::env::var("GITHUB_JSON").expect("Couldn't get GITHUB_JSON");
     println!("{}", github_json);
     let github = GithubContext::from_str(&github_json).expect("Couldn't parse JSON.");
