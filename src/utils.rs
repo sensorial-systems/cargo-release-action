@@ -16,19 +16,24 @@ fn execute(command: &str, args: &[&str]) -> Result<String, String> {
         .args(args.iter())
         .output()
         .expect("Couldn't get Output.");
+    let stdout = String::from_utf8(output.stdout)
+        .map(|stdout| {
+            println!("{}", stdout);
+            stdout
+        })
+        .map_err(|err| {
+            err.to_string()
+        });
     if output.status.success() {
-        String::from_utf8(output.stdout)
-            .map_err(|err| {
-                err.to_string()
-            })
+        stdout
     } else {
         Err(format!("{} {:?}: execution failed", command, args))
     }
 }
 
 pub fn publish(release: &str, github_token: &str, cargo_token: &str) -> Result<String, String> {
-    execute("git", &["config", "--config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])?;
-    execute("git", &["config", "--config", "user.name", "github-actions[bot]"])?;
+    execute("git", &["config", "--local", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])?;
+    execute("git", &["config", "--local", "user.name", "github-actions[bot]"])?;
     execute("cargo", &["login", &cargo_token])?;
     execute("cargo", &["install", "cargo-release"])?;
     execute("cargo", &["release", release, "--no-confirm"])
