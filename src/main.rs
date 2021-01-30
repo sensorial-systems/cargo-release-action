@@ -16,13 +16,15 @@ fn main() {
             check_publish().expect("Check publish failed.");
         },
         Event::Push(_) => {
-            println!("Releasing...");
             // If release.is_none(), then the Event::Push probably didn't come from a pull request.
             if let Some(release) = release {
+                println!("Releasing...");
                 let release = format!("{:?}", release).to_lowercase();
                 let cargo_token  = std::env::var("CARGO_TOKEN").expect("Couldn't get CARGO_TOKEN. Remember to set the cargo-token input in your 'on push' action.");
                 let github_token = std::env::var("GITHUB_TOKEN").expect("Couldn't get GITHUB_TOKEN. Remember to set the github-token input in your 'on push' action.");
                 publish(&release, &github_token, &cargo_token).expect("Publish failed.");
+            } else {
+                println!("Not releasing.");
             }
         },
         Event::Unknown => ()
