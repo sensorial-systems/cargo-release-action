@@ -16,11 +16,12 @@ fn execute(command: &str, args: &[&str]) {
         .status()
         .expect("Couldn't get ExitStatus.");
     if !status.success() {
-        panic!("Command execution failed.");
+        panic!("{} {:?}: execution failed.", command, args);
     }
 }
 
 pub fn publish(release: &str, _token: &str) {
+    execute("cargo", &["install", "cargo-release"]);
     execute("cargo", &[release, "--no-confirm"])
 }
 
@@ -38,6 +39,6 @@ pub fn check_publish() {
             std::process::exit(-1);
         }
     } else {
-        panic!("Command execution failed.");
+        panic!("{} {:?}: execution failed.", command, args);
     }
 }
