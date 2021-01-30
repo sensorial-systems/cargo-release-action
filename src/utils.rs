@@ -26,11 +26,10 @@ fn execute(command: &str, args: &[&str]) -> Result<String, String> {
     }
 }
 
-pub fn publish(release: &str, _token: &str) -> Result<String, String> {
-    let cargo_token = std::env::var("CARGO_TOKEN").map_err(|err| err.to_string())?;
+pub fn publish(release: &str, github_token: &str, cargo_token: &str) -> Result<String, String> {
     execute("git", &["config", "--config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])?;
     execute("git", &["config", "--config", "user.name", "github-actions[bot]"])?;
-    execute("cargo", &["login", cargo_token])?;
+    execute("cargo", &["login", &cargo_token])?;
     execute("cargo", &["install", "cargo-release"])?;
     execute("cargo", &["release", release, "--no-confirm"])
 }

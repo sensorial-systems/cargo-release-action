@@ -17,7 +17,9 @@ fn main() {
         Event::Push(_) => {
             // If release.is_none(), then the Event::Push probably didn't come from a pull request.
             if let Some(release) = release {
-                publish(&format!("{:?}", release).to_lowercase(), "").expect("Publish failed.");
+                let cargo_token  = std::env::var("CARGO_TOKEN").expect("Couldn't get CARGO_TOKEN");
+                let github_token = std::env::var("GITHUB_TOKEN").expect("Couldn't get GITHUB_TOKEN");
+                publish(&format!("{:?}", release).to_lowercase(), &github_token, &cargo_token).expect("Publish failed.");
             }
         },
         Event::Unknown => ()
