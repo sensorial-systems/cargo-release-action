@@ -10,11 +10,17 @@ inputs:
   patch-label:
     description: 'Label used for bumping the patch semver number'
     required: true
+  github-token:
+    description: 'GitHub Token used to push (only required on push)'
+  cargo-token:
+    description: 'Cargo Token used to publish (only required on push)'
 runs:
   using: "composite"
   steps:
     - run: cargo run --release --manifest-path=${{ github.action_path }}/Cargo.toml
       env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        CARGO_TOKEN: ${{ inputs.cargo-token }}
         GITHUB_JSON: ${{ toJson(github) }}
         MAJOR_LABEL: ${{ inputs.major-label }}
         MINOR_LABEL: ${{ inputs.minor-label }}
