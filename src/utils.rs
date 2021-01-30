@@ -11,6 +11,7 @@ pub fn get<T: DeserializeOwned>(url: &str) -> serde_json::Result<T> {
 }
 
 fn execute(command: &str, args: &[&str]) {
+    println!("Executing: {} {:?}", command, args);
     let status = Command::new(command)
         .args(args.iter())
         .status()
@@ -22,12 +23,13 @@ fn execute(command: &str, args: &[&str]) {
 
 pub fn publish(release: &str, _token: &str) {
     execute("cargo", &["install", "cargo-release"]);
-    execute("cargo", &[release, "--no-confirm"])
+    execute("cargo", &["release", release, "--no-confirm"])
 }
 
 pub fn check_publish() {
     let command = "cargo";
     let args = &["publish", "--dry-run"];
+    println!("Executing: {} {:?}", command, args);
     let output = Command::new(command)
         .args(args.iter())
         .output()
