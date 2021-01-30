@@ -10,24 +10,20 @@ pub fn get<T: DeserializeOwned>(url: &str) -> serde_json::Result<T> {
     serde_json::from_str(&body)
 }
 
-fn execute(command: &str, args: &[&str]) -> Result<String, String> {
+fn execute(command: &str, args: &[&str]) -> Result<(), String> {
     println!("Executing: {} {:?}", command, args);
-    let output = Command::new(command)
+    let status = Command::new(command)
         .args(args.iter())
-        .output()
+        .status()
         .expect("Couldn't get Output.");
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    let message = format!("stdout: {}\nstderr: {}", stdout, stderr);
-    println!("{}", message);
-    if output.status.success() {
-        Ok(message)
+    if status.success() {
+        Ok(())
     } else {
         Err(format!("{} {:?}: execution failed", command, args))
     }
 }
 
-pub fn publish(release: &str, github_token: &str, cargo_token: &str) -> Result<String, String> {
+pub fn publish(release: &str, github_token: &str, cargo_token: &str) -> Result<(), String> {
     execute("git", &["config", "--local", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])?;
     execute("git", &["config", "--local", "user.name", "github-actions[bot]"])?;
     execute("cargo", &["login", &cargo_token])?;
@@ -36,8 +32,5 @@ pub fn publish(release: &str, github_token: &str, cargo_token: &str) -> Result<S
 }
 
 pub fn check_publish() -> Result<(), String> {
-    let output = execute("cargo", &["publish", "--dry-run"])?;
-    output.find("warning")
-        .map(|_| ())
-        .ok_or_else(|| "Check publish failed.".to_string())
+    execute("cargo", &["publish", "--dry-run"])
 }
