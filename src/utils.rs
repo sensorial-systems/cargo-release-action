@@ -44,6 +44,7 @@ fn execute(command: &str, args: &[&str]) -> Result<(), String> {
 pub fn publish(release: &str, cargo_token: &str) -> Result<(), String> {
     execute("git", &["config", "--local", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])?;
     execute("git", &["config", "--local", "user.name", "github-actions[bot]"])?;
+    execute("git", &["remote", "-v"]);
     execute("cargo", &["login", &cargo_token])?;
     execute("cargo", &["install", "cargo-release"])?;
     execute("cargo", &["release", release, "--no-confirm"])
