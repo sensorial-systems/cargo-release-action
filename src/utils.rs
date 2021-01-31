@@ -51,5 +51,9 @@ pub fn publish(release: &str, cargo_token: &str) -> Result<(), String> {
 
 pub fn check_publish() -> Result<(), String> {
     let output = execute_with_output("cargo", &["publish", "--dry-run"])?;
-    output.find("warning").ok_or_else(|| "Can't publish crate.".to_string()).map(|_| ())
+    if let Some(_) = output.find("warning") {
+        Err("Can't publish crate.".to_string())
+    } else {
+        Ok(())
+    }
 }
