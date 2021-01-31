@@ -51,7 +51,14 @@ pub fn publish(release: &str, cargo_token: &str) -> Result<(), String> {
 
 pub fn check_publish() -> Result<(), String> {
     let output = execute_with_output("cargo", &["publish", "--dry-run"])?;
-    if let Some(_) = output.find("warning") {
+    let warning_count = output
+        .lines()
+        .filter(|line| {
+            line.find("warning").is_some()
+        }).count();
+    // Because it will always print "warning: aborting upload due to dry run", we count if we have
+    // more warnings than 1.
+    if warning_count > 1 {
         Err("Can't publish crate.".to_string())
     } else {
         Ok(())
