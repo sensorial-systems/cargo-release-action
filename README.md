@@ -1,2 +1,60 @@
 # cargo-release-action
-Github Action for automatically releasing to crates.io based on pull request labels
+GitHub Action used for publishing `push`ed changes from a release label.
+
+[1]: It still supports workspaces.
+
+## Usage
+
+This GitHub action can be used either to publish the crate or to check if it's releasable.
+It depends on the execution context.
+
+### On push
+The push triggering this event must have come from a Pull Request.
+This action bumps the semantic version, depending on the release label from the original Pull Request, and publishes the crate.
+```yaml
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: Release
+    name: Release
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: nash-ws/cargo-release-action@main
+        with:
+          major-label: major
+          minor-label: minor
+          patch-label: patch
+          cargo-token: ${{ secrets.CARGO_TOKEN }}
+```
+
+### On pull_request
+For checking if the crate is releasable.
+1. Checks if the Pull Request has a release label.
+2. Checks if the crate is publishable with `cargo publish`.
+```yaml
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    name: Check Release
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: nash-ws/cargo-release-action@main
+        with:
+          major-label: major
+          minor-label: minor
+          patch-label: patch
+```
