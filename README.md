@@ -3,8 +3,7 @@ GitHub Action used for publishing `pushed` changes from a `pull request`.
 
 ## Usage
 
-This GitHub action can be used either to publish the crate[1]: It still doesn't supports workspaces.
-or to check if it's releasable.
+This GitHub action can be used either to publish the crate[1] or to check if it's releasable.
 It depends on the execution context.
 
 [1]: Workspaces aren't supported yet.
