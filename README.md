@@ -1,5 +1,5 @@
 # cargo-release-action
-GitHub Action used for publishing `pushed` changes from a `pull request`.
+GitHub Action for publishing `pushed` changes from a `pull request` with a `release label`.
 
 ## Usage
 
