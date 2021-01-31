@@ -1,12 +1,13 @@
 # cargo-release-action
 GitHub Action used for publishing `pushed` changes from a `pull request`.
 
-[1]: It still supports workspaces.
-
 ## Usage
 
-This GitHub action can be used either to publish the crate or to check if it's releasable.
+This GitHub action can be used either to publish the crate[1]: It still doesn't supports workspaces.
+or to check if it's releasable.
 It depends on the execution context.
+
+[1]: It still doesn't support workspaces.
 
 ### On push
 The push triggering this event must have come from a Pull Request.
