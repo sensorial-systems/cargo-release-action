@@ -12,12 +12,19 @@ inputs:
     required: true
   cargo-token:
     description: 'Cargo Token used to publish (only required on push)'
+  github-user-name:
+    description: 'GitHub user name used to push the updated semantic version and the tag (only required on push)'
+  github-token:
+    description: 'GitHub Token used to push the updated semantic version and the tag (only required on push)'
+
 runs:
   using: "composite"
   steps:
     - run: cargo run --release --manifest-path=${{ github.action_path }}/Cargo.toml
       env:
         CARGO_TOKEN: ${{ inputs.cargo-token }}
+        GITHUB_USER_NAME: ${{ inputs.github-user-name }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
         GITHUB_JSON: ${{ toJson(github) }}
         MAJOR_LABEL: ${{ inputs.major-label }}
         MINOR_LABEL: ${{ inputs.minor-label }}
