@@ -7,7 +7,7 @@ This GitHub action can be used either to publish the crate[1]: It still doesn't 
 or to check if it's releasable.
 It depends on the execution context.
 
-[1]: It still doesn't support workspaces.
+[1]: Workspaces aren't supported yet.
 
 ### On push
 The push triggering this event must have come from a Pull Request.
