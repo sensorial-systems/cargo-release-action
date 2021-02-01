@@ -46,6 +46,7 @@ pub fn publish(release: &str, repository: &str, user_name: &str, github_token: &
     execute("git", &["config", "--local", "user.name", "github-actions[bot]"])?;
     execute("git", &["remote", "-v"])?;
     execute("git", &["remote", "set-url", "origin", &format!("https://{}:{}@github.com/{}", user_name, github_token, repository)])?;
+    execute("git", &["remote", "-v"])?;
     execute("cargo", &["login", &cargo_token])?;
     execute("cargo", &["install", "cargo-release"])?;
     execute("cargo", &["release", release, "--no-confirm", "--skip-publish"])?;
