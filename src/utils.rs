@@ -41,12 +41,9 @@ fn execute(command: &str, args: &[&str]) -> Result<(), String> {
     }
 }
 
-pub fn publish(release: &str, repository: &str, user_name: &str, user_email: &str, github_token: &str, cargo_token: &str) -> Result<(), String> {
-    execute("git", &["config", "--local", "user.email", user_email])?;
-    execute("git", &["config", "--local", "user.name", user_name])?;
-    execute("git", &["remote", "-v"])?;
-    execute("git", &["remote", "set-url", "origin", &format!("https://{}:{}@github.com/{}", user_name, github_token, repository)])?;
-    execute("git", &["remote", "-v"])?;
+pub fn publish(release: &str, cargo_token: &str) -> Result<(), String> {
+    execute("git", &["config", "--local", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"])?;
+    execute("git", &["config", "--local", "user.name", "github-actions[bot]"])?;
     execute("cargo", &["login", &cargo_token])?;
     execute("cargo", &["install", "cargo-release"])?;
     execute("cargo", &["release", release, "--no-confirm", "--skip-publish"])?;
