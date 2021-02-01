@@ -22,9 +22,10 @@ fn main() {
                 let release = format!("{:?}", release).to_lowercase();
                 let cargo_token  = std::env::var("CARGO_TOKEN").expect("Couldn't get CARGO_TOKEN. Remember to set the cargo-token input in your 'on push' action.");
                 let github_user_name = std::env::var("GITHUB_USER_NAME").expect("Couldn't get GITHUB_USER_NAME.");
+                let github_user_email = std::env::var("GITHUB_USER_EMAIL").expect("Couldn't get GITHUB_USER_EMAIL");
                 let github_token = std::env::var("GITHUB_TOKEN").expect("Couldn't get GITHUB_TOKEN.");
                 let repository = &github.repository;
-                publish(&release, repository, &github_user_name, &github_token, &cargo_token).expect("Publish failed.");
+                publish(&release, repository, &github_user_name, &github_user_email, &github_token, &cargo_token).expect("Publish failed.");
             } else {
                 println!("Not releasing.");
             }
