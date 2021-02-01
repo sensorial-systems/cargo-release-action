@@ -9,6 +9,8 @@ jobs:
     name: Release
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
