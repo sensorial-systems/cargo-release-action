@@ -1,5 +1,5 @@
 # cargo-release-action
-GitHub Action for publishing `pushed` changes from a `pull request` with a `release label`.
+GitHub Action for publishing `pushed` changes from a `pull request` with a `release label` to https://crates.io/.
 
 ## Usage
 
