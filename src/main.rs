@@ -9,23 +9,22 @@ fn main() {
     let github_json = std::env::var("GITHUB_JSON").expect("Couldn't get GITHUB_JSON");
     let github = GithubContext::from_str(&github_json).expect("Couldn't parse JSON.");
     let release: Option<Release> = (&github).into();
-    match &github.event {
-        Event::PullRequest(_) => {
-            println!("Checking release...");
-            println!("The semver {:?} number will be bumped on merge.", release.expect("Release label not present."));
-            check_publish().expect("Check publish failed.");
-        },
-        Event::Push(_) => {
-            // If release.is_none(), then the Event::Push probably didn't come from a pull request.
-            if let Some(release) = release {
+    if let Some(release) = release {
+        match &github.event {
+            Event::PullRequest(_) => {
+                println!("Checking release...");
+                println!("The semver {:?} number will be bumped on merge.", release);
+                check_publish().expect("Check publish failed.");
+            },
+            Event::Push(_) => {
                 println!("Releasing...");
                 let release = format!("{:?}", release).to_lowercase();
                 let cargo_token  = std::env::var("CARGO_TOKEN").expect("Couldn't get CARGO_TOKEN. Remember to set the cargo-token input in your 'on push' action.");
                 publish(&release, &cargo_token).expect("Publish failed.");
-            } else {
-                println!("Not releasing.");
-            }
-        },
-        Event::Unknown => ()
+            },
+            Event::Unknown => ()
+        }
+    } else {
+        println!("Release label not present. Publishing ignored.");
     }
 }
