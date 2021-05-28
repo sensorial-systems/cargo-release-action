@@ -15,16 +15,18 @@ fn execute_with_output(command: &str, args: &[&str]) -> Result<String, String> {
     let output = Command::new(command)
         .args(args.iter())
         .output()
-        .expect("Couldn't get Output.");
+        .map_err(|_| "Couldn't get Output.".to_string())?;
+
+    std::io::stdout().write_all(&output.stdout).unwrap();
+    std::io::stderr().write_all(&output.stderr).unwrap();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stdio = format!("stderr: {}\nstdout: {}", stderr, stdout);
 
     if output.status.success() {
-        std::io::stdout().write_all(&output.stdout).unwrap();
-        std::io::stderr().write_all(&output.stderr).unwrap();
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        Ok(format!("{}\n{}", stderr, stdout))
+        Ok(stdio)
     } else {
-        Err(format!("{} {:?}: execution failed", command, args))
+        Err(format!("{} {:?}: execution failed.\n{}", command, args, stdio))
     }
 }
 
