@@ -26,7 +26,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - uses: nash-ws/cargo-release-action@main
+      - uses: sensorial-systems/cargo-release-action@main
         with:
           major-label: major
           minor-label: minor
