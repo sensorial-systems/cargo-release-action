@@ -8,14 +8,19 @@ It depends on the execution context.
 
 [1]: Workspaces aren't supported yet.
 
-### On push
-The push triggering this event must have come from a Pull Request.
-This action bumps the semantic version, depending on the release label from the original Pull Request, and publishes the crate.
+`.github/workflows/release.yml`
+
 ```yaml
+name: Release
+
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -26,7 +31,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - uses: nash-ws/cargo-release-action@main
+      - uses: sensorial-systems/cargo-release-action@main
         with:
           major-label: major
           minor-label: minor
@@ -34,27 +39,14 @@ jobs:
           cargo-token: ${{ secrets.CARGO_TOKEN }}
 ```
 
-### On pull_request
+### Behavior
+
+#### On push
+The push triggering this event must have come from a `Pull Request`.
+
+If the `Pull Request` has a `Release Label`, this action will bump the semantic version, depending on the type of the `Release Label` from the original Pull `Request`, and it will publish the crate.
+
+#### On pull_request
 For checking if the crate is releasable.
-1. Checks if the Pull Request has a release label.
+1. Checks if the `Pull Request` has a `Release Label`.
 2. Checks if the crate is publishable with `cargo publish`.
-```yaml
-on:
-  pull_request:
-    branches:
-      - main
-jobs:
-  check-release:
-    runs-on: ubuntu-latest
-    name: Check Release
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - uses: nash-ws/cargo-release-action@main
-        with:
-          major-label: major
-          minor-label: minor
-          patch-label: patch
-```
